@@ -2,6 +2,7 @@ package pdns
 
 import (
 	"context"
+	"github.com/mittwald/go-powerdns/apis/search"
 	"github.com/mittwald/go-powerdns/apis/servers"
 	"github.com/mittwald/go-powerdns/apis/zones"
 )
@@ -24,4 +25,7 @@ type Client interface {
 
 	// Zones returns a specialized API for interacting with PowerDNS zones
 	Zones() zones.Client
+
+	// Search returns a specialized API for searching
+	Search() search.Client
 }

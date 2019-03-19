@@ -3,6 +3,7 @@ package zones
 import (
 	"context"
 	"fmt"
+	"github.com/mittwald/go-powerdns/pdnshttp"
 	"net/url"
 )
 
@@ -19,5 +20,5 @@ func (c *client) RemoveRecordSetFromZone(ctx context.Context, serverID string, z
 		ResourceRecordSets: []ResourceRecordSet{set},
 	}
 
-	return c.httpClient.Patch(ctx, path, &patch, nil)
+	return c.httpClient.Patch(ctx, path, nil, pdnshttp.WithJSONRequestBody(&patch))
 }

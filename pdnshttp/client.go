@@ -1,7 +1,6 @@
 package pdnshttp
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -44,42 +43,32 @@ func (c *Client) NewRequest(method string, path string, body io.Reader) (*http.R
 	return req, err
 }
 
-func (c *Client) Get(ctx context.Context, path string, out interface{}) error {
-	return c.doRequest(ctx, http.MethodGet, path, nil, out)
+func (c *Client) Get(ctx context.Context, path string, out interface{}, opts ...RequestOption) error {
+	return c.doRequest(ctx, http.MethodGet, path, out, opts...)
 }
 
-func (c *Client) Post(ctx context.Context, path string, in interface{}, out interface{}) error {
-	return c.doRequest(ctx, http.MethodPost, path, in, out)
+func (c *Client) Post(ctx context.Context, path string, out interface{}, opts ...RequestOption) error {
+	return c.doRequest(ctx, http.MethodPost, path, out, opts...)
 }
 
-func (c *Client) Patch(ctx context.Context, path string, in interface{}, out interface{}) error {
-	return c.doRequest(ctx, http.MethodPatch, path, in, out)
+func (c *Client) Patch(ctx context.Context, path string, out interface{}, opts ...RequestOption) error {
+	return c.doRequest(ctx, http.MethodPatch, path, out, opts...)
 }
 
-func (c *Client) Delete(ctx context.Context, path string, out interface{}) error {
-	return c.doRequest(ctx, http.MethodDelete, path, nil, out)
+func (c *Client) Delete(ctx context.Context, path string, out interface{}, opts ...RequestOption) error {
+	return c.doRequest(ctx, http.MethodDelete, path, out, opts...)
 }
 
-func (c *Client) doRequest(ctx context.Context, method string, path string, in interface{}, out interface{}) error {
-	var body io.ReadWriter
-
-	if in != nil {
-		body = new(bytes.Buffer)
-		enc := json.NewEncoder(body)
-		err := enc.Encode(in)
-
-		if err != nil {
-			return err
-		}
-	}
-
-	req, err := c.NewRequest(method, path, body)
+func (c *Client) doRequest(ctx context.Context, method string, path string, out interface{}, opts ...RequestOption) error {
+	req, err := c.NewRequest(method, path, nil)
 	if err != nil {
 		return err
 	}
 
-	if in != nil {
-		req.Header.Set("Content-Type", "application/json")
+	for i := range opts {
+		if err := opts[i](req); err != nil {
+			return err
+		}
 	}
 
 	req = req.WithContext(ctx)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/mittwald/go-powerdns/apis/search"
 	"github.com/mittwald/go-powerdns/apis/zones"
 	"github.com/mittwald/go-powerdns/pdnshttp"
 	"github.com/stretchr/testify/assert"
@@ -267,6 +268,38 @@ func TestRemoveRecordFromZone(t *testing.T) {
 	require.Nil(t, err)
 	rs = updated.GetRecordSet("bar.example3.de.", "A")
 	require.Nil(t, rs)
+}
+
+func TestSearchZone(t *testing.T) {
+	c := buildClient(t)
+
+	zone := zones.Zone{
+		Name: "example-search.de.",
+		Type: zones.ZoneTypeZone,
+		Kind: zones.ZoneKindNative,
+		Nameservers: []string{
+			"ns1.example.com.",
+			"ns2.example.com.",
+		},
+		ResourceRecordSets: []zones.ResourceRecordSet{
+			{Name: "example-search.de.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "127.0.0.1"}}},
+		},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	_, err := c.Zones().CreateZone(ctx, "localhost", zone)
+
+	require.Nil(t, err, "CreateZone returned error")
+
+	results, sErr := c.Search().Search(ctx, "localhost", "example-search.de", 10, search.ObjectTypeZone)
+
+	require.Nil(t, sErr)
+	require.True(t, len(results) > 0, "number of search results should be > 0")
+
+	assert.Equal(t, "example-search.de.", results[0].Name)
+	assert.Equal(t, search.ObjectTypeZone, results[0].ObjectType)
 }
 
 func buildClient(t *testing.T) Client {
