@@ -9,6 +9,6 @@ services:
   - docker
 
 script:
-  - go vet
-  - go test ./...
-  - go build
+  - GO111MODULE=on go vet
+  - GO111MODULE=on go test ./...
+  - GO111MODULE=on go build
