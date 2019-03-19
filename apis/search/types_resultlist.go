@@ -20,7 +20,7 @@ func (l ResultList) FilterByRecordType(t string) ResultList {
 	})
 }
 
-// FilteBy returns all elements of a result list that match a generic matcher
+// FilterBy returns all elements of a result list that match a generic matcher
 // function. The "matcher" function will be invoked for each element in the
 // result list; if it returns true, the respective item will be included in the
 // result list.

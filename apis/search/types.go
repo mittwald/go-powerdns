@@ -2,8 +2,11 @@ package search
 
 import "fmt"
 
+// ObjectType represents the object type for which a search should be performed
 type ObjectType int
 
+// Possible object types; according to the PowerDNS documentation, this list is
+// exhaustive.
 const (
 	_                        = iota
 	ObjectTypeAll ObjectType = iota

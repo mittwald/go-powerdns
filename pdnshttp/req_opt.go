@@ -8,8 +8,14 @@ import (
 	"net/http"
 )
 
+// RequestOption is a special type of function that can be passed to most HTTP
+// request functions in this package; it is used to modify an HTTP request and
+// to implement special request logic.
 type RequestOption func(*http.Request) error
 
+// WithJSONRequestBody adds a JSON body to a request. The input type can be
+// anything, as long as it can be marshaled by "json.Marshal". This method will
+// also automatically set the correct content type and content-length.
 func WithJSONRequestBody(in interface{}) RequestOption {
 	return func(req *http.Request) error {
 		if in == nil {
@@ -40,6 +46,7 @@ func WithJSONRequestBody(in interface{}) RequestOption {
 	}
 }
 
+// WithQueryValue adds a query parameter to a request's URL.
 func WithQueryValue(key, value string) RequestOption {
 	return func(req *http.Request) error {
 		q := req.URL.Query()
