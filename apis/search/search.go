@@ -7,9 +7,9 @@ import (
 	"net/url"
 )
 
-func (c *client) Search(ctx context.Context, serverID, query string, max int, objectType ObjectType) ([]SearchResult, error) {
+func (c *client) Search(ctx context.Context, serverID, query string, max int, objectType ObjectType) (ResultList, error) {
 	path := fmt.Sprintf("/api/v1/servers/%s/search-data", url.PathEscape(serverID))
-	results := make([]SearchResult, 0)
+	results := make(ResultList, 0)
 
 	err := c.httpClient.Get(
 		ctx,

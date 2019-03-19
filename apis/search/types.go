@@ -12,6 +12,7 @@ const (
 	ObjectTypeComment
 )
 
+// String makes this type implement fmt.Stringer
 func (t ObjectType) String() string {
 	switch t {
 	case ObjectTypeAll:
@@ -27,6 +28,7 @@ func (t ObjectType) String() string {
 	return ""
 }
 
+// UnmarshalJSON makes this type implement json.Unmarshaler
 func (t *ObjectType) UnmarshalJSON(b []byte) error {
 	switch string(b) {
 	case `"all"`:
@@ -44,7 +46,9 @@ func (t *ObjectType) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-type SearchResult struct {
+// Result represents a single search result. See the documentation for more
+// information: https://doc.powerdns.com/authoritative/http-api/search.html#searchresult
+type Result struct {
 	Content    string     `json:"content"`
 	Disabled   bool       `json:"disabled"`
 	Name       string     `json:"name"`

@@ -6,6 +6,6 @@ import "context"
 type Client interface {
 
 	// ListServers lists all known servers
-	Search(ctx context.Context, serverID, query string, max int, objectType ObjectType) ([]SearchResult, error)
+	Search(ctx context.Context, serverID, query string, max int, objectType ObjectType) (ResultList, error)
 
 }
