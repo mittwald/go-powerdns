@@ -180,6 +180,7 @@ func TestDeleteZone(t *testing.T) {
 
 	_, getErr := c.Zones().GetZone(ctx, "localhost", created.ID)
 	assert.NotNil(t, getErr)
+	assert.IsType(t, pdnshttp.ErrNotFound{}, getErr)
 	assert.True(t, pdnshttp.IsNotFound(getErr))
 }
 

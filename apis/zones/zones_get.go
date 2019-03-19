@@ -3,6 +3,8 @@ package zones
 import (
 	"context"
 	"fmt"
+	"github.com/mittwald/go-powerdns/pdnshttp"
+	"net/http"
 	"net/url"
 )
 
@@ -12,6 +14,12 @@ func (c *client) GetZone(ctx context.Context, serverID, zoneID string) (*Zone, e
 
 	err := c.httpClient.Get(ctx, path, &zone)
 	if err != nil {
+		if e, ok := err.(pdnshttp.ErrUnexpectedStatus); ok {
+			if e.StatusCode == http.StatusUnprocessableEntity {
+				return nil, pdnshttp.ErrNotFound{}
+			}
+		}
+
 		return nil, err
 	}
 
