@@ -173,7 +173,7 @@ func TestDeleteZone(t *testing.T) {
 	require.Nil(t, err, "CreateZone returned error")
 
 	assert.NotEmpty(t, created.ID)
-	assert.Equal(t, "example.de.", created.Name)
+	assert.Equal(t, "example-delete.de.", created.Name)
 
 	deleteErr := c.Zones().DeleteZone(ctx, "localhost", created.ID)
 	require.Nil(t, deleteErr, "DeleteZone returned error")
