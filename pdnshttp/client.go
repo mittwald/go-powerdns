@@ -106,12 +106,12 @@ func (c *Client) doRequest(ctx context.Context, method string, path string, out 
 		if w, ok := out.(io.Writer); ok {
 			_, err := io.Copy(w, res.Body)
 			return err
-		} else {
-			dec := json.NewDecoder(res.Body)
-			err = dec.Decode(out)
-			if err != nil {
-				return err
-			}
+		}
+
+		dec := json.NewDecoder(res.Body)
+		err = dec.Decode(out)
+		if err != nil {
+			return err
 		}
 	}
 
