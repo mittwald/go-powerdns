@@ -59,7 +59,16 @@ func main() {
     }
     
     client.Zones().CreateZone(context.Background(), "localhost", zones.Zone{
-        Name: "example.com.",
+        Name: "mydomain.example.",
+        Type: zones.ZoneTypeZone,
+        Kind: zones.ZoneKindNative,
+        Nameservers: []string{
+            "ns1.example.com.",
+            "ns2.example.com.",
+        },
+        ResourceRecordSets: []zones.ResourceRecordSet{
+            {Name: "foo.mydomain.example.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "127.0.0.1"}}},
+        },
     })
 }
 ```
