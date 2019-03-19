@@ -302,6 +302,35 @@ func TestSearchZone(t *testing.T) {
 	assert.Equal(t, search.ObjectTypeZone, results[0].ObjectType)
 }
 
+func TestExportZone(t *testing.T) {
+	c := buildClient(t)
+
+	zone := zones.Zone{
+		Name: "example-export.de.",
+		Type: zones.ZoneTypeZone,
+		Kind: zones.ZoneKindNative,
+		Nameservers: []string{
+			"ns1.example.com.",
+			"ns2.example.com.",
+		},
+		ResourceRecordSets: []zones.ResourceRecordSet{
+			{Name: "example-export.de.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "127.0.0.1"}}},
+		},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	created, err := c.Zones().CreateZone(ctx, "localhost", zone)
+
+	require.Nil(t, err, "CreateZone returned error")
+
+	export, sErr := c.Zones().ExportZone(ctx, "localhost", created.ID)
+
+	require.Nil(t, sErr)
+	require.Equal(t, "example-export.de.\t60\tA\t127.0.0.1\nexample-export.de.\t3600\tNS\tns1.example.com.\nexample-export.de.\t3600\tNS\tns2.example.com.\nexample-export.de.\t3600\tSOA\ta.misconfigured.powerdns.server. hostmaster.example-export.de. 2019031901 10800 3600 604800 3600\n", string(export))
+}
+
 func buildClient(t *testing.T) Client {
 	debug := ioutil.Discard
 

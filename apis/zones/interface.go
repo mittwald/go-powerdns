@@ -24,4 +24,19 @@ type Client interface {
 	// RemoveRecordSetFromZone removes a record set from a zone. The record set is matched
 	// by name and type.
 	RemoveRecordSetFromZone(ctx context.Context, serverID string, zoneID string, name string, recordType string) error
+
+	// RetrieveFromMaster retrieves a slave zone from its master
+	RetrieveFromMaster(ctx context.Context, serverID string, zoneID string) error
+
+	// NotifySlaves sends a DNS NOTIFY to all slaves
+	NotifySlaves(ctx context.Context, serverID string, zoneID string) error
+
+	// ExportZone exports the entire zone in AXFR format
+	ExportZone(ctx context.Context, serverID string, zoneID string) ([]byte, error)
+
+	// VerifyZone verifies a zone's configuration
+	VerifyZone(ctx context.Context, serverID string, zoneID string) error
+
+	// RectifyZone rectifies the zone data
+	RectifyZone(ctx context.Context, serverID string, zoneID string) error
 }
