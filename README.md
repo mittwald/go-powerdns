@@ -2,7 +2,18 @@
 
 [![GoDoc](https://godoc.org/github.com/mittwald/go-powerdns?status.svg)](https://godoc.org/github.com/mittwald/go-powerdns)
 
-This package contains a Go library for accessing the [PowerDNS][powerdns] API.
+This package contains a Go library for accessing the [PowerDNS][powerdns] Authoritative API.
+
+## Supported features
+
+- [x] Servers
+- [x] Zones (partially)
+- [ ] Cryptokeys
+- [ ] Metadata
+- [ ] TSIG Keys
+- [ ] Searching
+- [ ] Statistics
+- [ ] Cache
 
 ## Installation
 
