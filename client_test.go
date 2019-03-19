@@ -40,7 +40,8 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	c.WaitUntilUp(ctx)
 
 	e := m.Run()
@@ -77,7 +78,8 @@ func TestCanConnect(t *testing.T) {
 func TestListServers(t *testing.T) {
 	c := buildClient(t)
 
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	servers, err := c.Servers().ListServers(ctx)
 
 	assert.Nil(t, err, "ListServers returned error")
@@ -87,7 +89,8 @@ func TestListServers(t *testing.T) {
 func TestGetServer(t *testing.T) {
 	c := buildClient(t)
 
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	server, err := c.Servers().GetServer(ctx, "localhost")
 
 	assert.Nil(t, err, "GetServer returned error")
@@ -98,7 +101,8 @@ func TestGetServer(t *testing.T) {
 func TestGetEmptyZones(t *testing.T) {
 	c := buildClient(t)
 
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	z, err := c.Zones().ListZones(ctx, "localhost")
 
 	require.Nil(t, err, "ListZones returned error")
@@ -129,7 +133,8 @@ func TestCreateZone(t *testing.T) {
 		},
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	created, err := c.Zones().CreateZone(ctx, "localhost", zone)
 
 	require.Nil(t, err, "CreateZone returned error")
@@ -161,17 +166,19 @@ func TestDeleteZone(t *testing.T) {
 		},
 	}
 
-	created, err := c.Zones().CreateZone(buildCtx(), "localhost", zone)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	created, err := c.Zones().CreateZone(ctx, "localhost", zone)
 
 	require.Nil(t, err, "CreateZone returned error")
 
 	assert.NotEmpty(t, created.ID)
 	assert.Equal(t, "example.de.", created.Name)
 
-	deleteErr := c.Zones().DeleteZone(buildCtx(), "localhost", created.ID)
+	deleteErr := c.Zones().DeleteZone(ctx, "localhost", created.ID)
 	require.Nil(t, deleteErr, "DeleteZone returned error")
 
-	_, getErr := c.Zones().GetZone(buildCtx(), "localhost", created.ID)
+	_, getErr := c.Zones().GetZone(ctx, "localhost", created.ID)
 	assert.NotNil(t, getErr)
 	assert.True(t, pdnshttp.IsNotFound(getErr))
 }
@@ -192,12 +199,12 @@ func TestAddRecordToZone(t *testing.T) {
 		},
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
 	created, err := c.Zones().CreateZone(ctx, "localhost", zone)
 
 	require.Nil(t, err, "CreateZone returned error")
 
-	ctx, _ = context.WithTimeout(context.Background(), 5*time.Second)
 	err = c.Zones().AddRecordSetToZone(ctx, "localhost", created.ID, zones.ResourceRecordSet{
 		Name:    "bar.example2.de.",
 		Type:    "A",
@@ -207,7 +214,6 @@ func TestAddRecordToZone(t *testing.T) {
 
 	require.Nil(t, err, "AddRecordSetToZone returned error")
 
-	ctx, _ = context.WithTimeout(context.Background(), 5*time.Second)
 	updated, err := c.Zones().GetZone(ctx, "localhost", created.ID)
 
 	require.Nil(t, err)
@@ -232,11 +238,14 @@ func TestRemoveRecordFromZone(t *testing.T) {
 		},
 	}
 
-	created, err := c.Zones().CreateZone(buildCtx(), "localhost", zone)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	created, err := c.Zones().CreateZone(ctx, "localhost", zone)
 
 	require.Nil(t, err, "CreateZone returned error")
 
-	err = c.Zones().AddRecordSetToZone(buildCtx(), "localhost", created.ID, zones.ResourceRecordSet{
+	err = c.Zones().AddRecordSetToZone(ctx, "localhost", created.ID, zones.ResourceRecordSet{
 		Name:    "bar.example3.de.",
 		Type:    "A",
 		TTL:     60,
@@ -245,23 +254,18 @@ func TestRemoveRecordFromZone(t *testing.T) {
 
 	require.Nil(t, err, "AddRecordSetToZone returned error")
 
-	updated, err := c.Zones().GetZone(buildCtx(), "localhost", created.ID)
+	updated, err := c.Zones().GetZone(ctx, "localhost", created.ID)
 	require.Nil(t, err)
 	rs := updated.GetRecordSet("bar.example3.de.", "A")
 	require.NotNil(t, rs)
 
-	err = c.Zones().RemoveRecordSetFromZone(buildCtx(), "localhost", created.ID, "bar.example3.de.", "A")
+	err = c.Zones().RemoveRecordSetFromZone(ctx, "localhost", created.ID, "bar.example3.de.", "A")
 	require.Nil(t, err, "RemoveRecordSetFromZone returned error")
 
-	updated, err = c.Zones().GetZone(buildCtx(), "localhost", created.ID)
+	updated, err = c.Zones().GetZone(ctx, "localhost", created.ID)
 	require.Nil(t, err)
 	rs = updated.GetRecordSet("bar.example3.de.", "A")
 	require.Nil(t, rs)
-}
-
-func buildCtx() context.Context {
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	return ctx
 }
 
 func buildClient(t *testing.T) Client {
@@ -289,7 +293,9 @@ func ExampleClient_waitUntilUp() {
 		WithAPIKeyAuthentication("secret"),
 	)
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	err := client.WaitUntilUp(ctx)
 	if err != nil {
 		panic(err)
@@ -349,7 +355,9 @@ func ExampleClient_createZone() {
 		},
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	zone, err := client.Zones().CreateZone(ctx, "localhost", input)
 	if err != nil {
 		panic(err)
