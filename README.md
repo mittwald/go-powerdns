@@ -13,7 +13,7 @@ This package contains a Go library for accessing the [PowerDNS][powerdns] Author
 - [ ] Cryptokeys
 - [ ] Metadata
 - [ ] TSIG Keys
-- [ ] Searching
+- [x] Searching
 - [ ] Statistics
 - [ ] Cache
 

@@ -8,7 +8,10 @@ import (
 )
 
 func TestChangeTypeSerializesCorrectly(t *testing.T) {
-	data := []struct{v RecordSetChangeType; e string}{
+	data := []struct {
+		v RecordSetChangeType
+		e string
+	}{
 		{ChangeTypeDelete, `"DELETE"`},
 		{ChangeTypeReplace, `"REPLACE"`},
 	}
@@ -31,7 +34,10 @@ func TestChangeTypeSerializationReturnErrorOnUnknownValue(t *testing.T) {
 }
 
 func TestChangeTypeUnserializesCorrectly(t *testing.T) {
-	data := []struct{v RecordSetChangeType; e string}{
+	data := []struct {
+		v RecordSetChangeType
+		e string
+	}{
 		{ChangeTypeDelete, `"DELETE"`},
 		{ChangeTypeReplace, `"REPLACE"`},
 	}

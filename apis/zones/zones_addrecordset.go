@@ -3,6 +3,7 @@ package zones
 import (
 	"context"
 	"fmt"
+	"github.com/mittwald/go-powerdns/pdnshttp"
 	"net/url"
 )
 
@@ -16,5 +17,5 @@ func (c *client) AddRecordSetToZone(ctx context.Context, serverID string, zoneID
 		},
 	}
 
-	return c.httpClient.Patch(ctx, path, &patch, nil)
+	return c.httpClient.Patch(ctx, path, nil, pdnshttp.WithJSONRequestBody(&patch))
 }

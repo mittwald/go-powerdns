@@ -3,6 +3,7 @@ package zones
 import (
 	"context"
 	"fmt"
+	"github.com/mittwald/go-powerdns/pdnshttp"
 	"net/url"
 )
 
@@ -17,7 +18,7 @@ func (c *client) CreateZone(ctx context.Context, serverID string, zone Zone) (*Z
 		zone.Kind = ZoneKindNative
 	}
 
-	err := c.httpClient.Post(ctx, path, &zone, &created)
+	err := c.httpClient.Post(ctx, path, &created, pdnshttp.WithJSONRequestBody(&zone))
 	if err != nil {
 		return nil, err
 	}
