@@ -24,7 +24,7 @@ func IsNotFound(err error) bool {
 	case ErrNotFound:
 	case *ErrNotFound:
 		return true
-	default:
-		return false
 	}
+
+	return false
 }
