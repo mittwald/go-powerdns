@@ -20,6 +20,11 @@ func (e ErrUnexpectedStatus) Error() string {
 }
 
 func IsNotFound(err error) bool {
-	_, ok := err.(ErrNotFound)
-	return ok
+	switch err.(type) {
+	case ErrNotFound:
+	case *ErrNotFound:
+		return true
+	default:
+		return false
+	}
 }
