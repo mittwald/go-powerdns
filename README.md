@@ -1,6 +1,8 @@
 # PowerDNS client library for Go
 
 [![GoDoc](https://godoc.org/github.com/mittwald/go-powerdns?status.svg)](https://godoc.org/github.com/mittwald/go-powerdns)
+[![Build Status](https://travis-ci.org/mittwald/go-powerdns.svg?branch=master)](https://travis-ci.org/mittwald/go-powerdns)
+[![Maintainability](https://api.codeclimate.com/v1/badges/aa54a869f5ff56477a2a/maintainability)](https://codeclimate.com/github/mittwald/go-powerdns/maintainability)
 
 This package contains a Go library for accessing the [PowerDNS][powerdns] Authoritative API.
 
