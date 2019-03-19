@@ -11,8 +11,8 @@ func (c *client) RemoveRecordSetFromZone(ctx context.Context, serverID string, z
 	path := fmt.Sprintf("/api/v1/servers/%s/zones/%s", url.PathEscape(serverID), url.PathEscape(zoneID))
 
 	set := ResourceRecordSet{
-		Name: name,
-		Type: recordType,
+		Name:       name,
+		Type:       recordType,
 		ChangeType: ChangeTypeDelete,
 	}
 

@@ -5,7 +5,7 @@ import "fmt"
 type ZoneKind int
 
 const (
-	_ = iota
+	_                       = iota
 	ZoneKindNative ZoneKind = iota
 	ZoneKindMaster
 	ZoneKindSlave

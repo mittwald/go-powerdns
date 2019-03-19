@@ -5,7 +5,7 @@ import "fmt"
 type ObjectType int
 
 const (
-	_             = iota
+	_                        = iota
 	ObjectTypeAll ObjectType = iota
 	ObjectTypeZone
 	ObjectTypeRecord

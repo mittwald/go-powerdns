@@ -12,7 +12,7 @@ import (
 )
 
 func TestSearchExecutesCorrectRequest(t *testing.T) {
-	cases := []struct{
+	cases := []struct {
 		query              string
 		max                int
 		objectType         ObjectType
