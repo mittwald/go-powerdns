@@ -56,6 +56,11 @@ func (c *Client) Post(ctx context.Context, path string, out interface{}, opts ..
 	return c.doRequest(ctx, http.MethodPost, path, out, opts...)
 }
 
+// Put executes a PUT request
+func (c *Client) Put(ctx context.Context, path string, out interface{}, opts ...RequestOption) error {
+	return c.doRequest(ctx, http.MethodPut, path, out, opts...)
+}
+
 // Patch executes a PATCH request
 func (c *Client) Patch(ctx context.Context, path string, out interface{}, opts ...RequestOption) error {
 	return c.doRequest(ctx, http.MethodPatch, path, out, opts...)
@@ -98,10 +103,15 @@ func (c *Client) doRequest(ctx context.Context, method string, path string, out 
 	}
 
 	if out != nil {
-		dec := json.NewDecoder(res.Body)
-		err = dec.Decode(out)
-		if err != nil {
+		if w, ok := out.(io.Writer); ok {
+			_, err := io.Copy(w, res.Body)
 			return err
+		} else {
+			dec := json.NewDecoder(res.Body)
+			err = dec.Decode(out)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
