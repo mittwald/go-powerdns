@@ -1,0 +1,14 @@
+language: go
+go:
+  - 1.12
+  - 1.11
+
+install: []
+
+services:
+  - docker
+
+script:
+  - go vet
+  - go test ./...
+  - go build
