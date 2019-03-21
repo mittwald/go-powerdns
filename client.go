@@ -30,9 +30,10 @@ type ClientOption func(c *client) error
 // the PowerDNS client (see examples).
 func New(opt ...ClientOption) (Client, error) {
 	c := client{
-		baseURL:     "http://localhost:8081",
-		httpClient:  http.DefaultClient,
-		debugOutput: ioutil.Discard,
+		baseURL:       "http://localhost:8081",
+		httpClient:    http.DefaultClient,
+		debugOutput:   ioutil.Discard,
+		authenticator: &pdnshttp.NoopAuthenticator{},
 	}
 
 	for i := range opt {
