@@ -330,7 +330,7 @@ func TestExportZone(t *testing.T) {
 	date := time.Now().Format("20060102") + "01"
 
 	require.Nil(t, sErr)
-	require.Equal(t, "example-export.de.\t60\tA\t127.0.0.1\nexample-export.de.\t3600\tNS\tns1.example.com.\nexample-export.de.\t3600\tNS\tns2.example.com.\nexample-export.de.\t3600\tSOA\ta.misconfigured.powerdns.server. hostmaster.example-export.de. "+date+" 10800 3600 604800 3600\n", string(export))
+	require.Equal(t, "example-export.de.\t60\tIN\tA\t127.0.0.1\nexample-export.de.\t3600\tIN\tNS\tns1.example.com.\nexample-export.de.\t3600\tIN\tNS\tns2.example.com.\nexample-export.de.\t3600\tIN\tSOA\ta.misconfigured.powerdns.server. hostmaster.example-export.de. "+date+" 10800 3600 604800 3600\n", string(export))
 }
 
 func buildClient(t *testing.T) Client {

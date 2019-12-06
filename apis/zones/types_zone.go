@@ -19,7 +19,7 @@ type Zone struct {
 	APIRectify         bool                `json:"api_rectify,omitempty"`
 	Zone               string              `json:"zone,omitempty"`
 	Account            string              `json:"account,omitempty"`
-	Nameservers        []string            `json:"nameservers,omitempty"`
+	Nameservers        []string            `json:"nameservers"`
 	TSIGMasterKeyIDs   []string            `json:"tsig_master_key_ids,omitempty"`
 	TSIGSlaveKeyIDs    []string            `json:"tsig_slave_key_ids,omitempty"`
 }
