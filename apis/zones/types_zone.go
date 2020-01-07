@@ -1,5 +1,21 @@
 package zones
 
+import "encoding/json"
+
+// ZoneNameservers is a special list type to represent the nameservers of a zone.
+// When nil, this type will still serialize to an empty JSON list.
+// See https://github.com/mittwald/go-powerdns/issues/4 for more information
+type ZoneNameservers []string
+
+// MarshalJSON implements the `json.Marshaler` interface
+func (z ZoneNameservers) MarshalJSON() ([]byte, error) {
+	if z == nil {
+		return []byte("[]"), nil
+	}
+
+	return json.Marshal([]string(z))
+}
+
 type Zone struct {
 	ID                 string              `json:"id,omitempty"`
 	Name               string              `json:"name"`
@@ -19,7 +35,7 @@ type Zone struct {
 	APIRectify         bool                `json:"api_rectify,omitempty"`
 	Zone               string              `json:"zone,omitempty"`
 	Account            string              `json:"account,omitempty"`
-	Nameservers        []string            `json:"nameservers"`
+	Nameservers        ZoneNameservers     `json:"nameservers"`
 	TSIGMasterKeyIDs   []string            `json:"tsig_master_key_ids,omitempty"`
 	TSIGSlaveKeyIDs    []string            `json:"tsig_slave_key_ids,omitempty"`
 }
