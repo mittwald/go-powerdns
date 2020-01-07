@@ -2,8 +2,12 @@ package zones
 
 import "encoding/json"
 
+// ZoneNameservers is a special list type to represent the nameservers of a zone.
+// When nil, this type will still serialize to an empty JSON list.
+// See https://github.com/mittwald/go-powerdns/issues/4 for more information
 type ZoneNameservers []string
 
+// MarshalJSON implements the `json.Marshaler` interface
 func (z ZoneNameservers) MarshalJSON() ([]byte, error) {
 	if z == nil {
 		return []byte("[]"), nil
