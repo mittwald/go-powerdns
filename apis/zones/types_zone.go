@@ -1,5 +1,17 @@
 package zones
 
+import "encoding/json"
+
+type ZoneNameservers []string
+
+func (z ZoneNameservers) MarshalJSON() ([]byte, error) {
+	if z == nil {
+		return []byte("[]"), nil
+	}
+
+	return json.Marshal([]string(z))
+}
+
 type Zone struct {
 	ID                 string              `json:"id,omitempty"`
 	Name               string              `json:"name"`
@@ -19,7 +31,7 @@ type Zone struct {
 	APIRectify         bool                `json:"api_rectify,omitempty"`
 	Zone               string              `json:"zone,omitempty"`
 	Account            string              `json:"account,omitempty"`
-	Nameservers        []string            `json:"nameservers"`
+	Nameservers        ZoneNameservers     `json:"nameservers"`
 	TSIGMasterKeyIDs   []string            `json:"tsig_master_key_ids,omitempty"`
 	TSIGSlaveKeyIDs    []string            `json:"tsig_slave_key_ids,omitempty"`
 }
