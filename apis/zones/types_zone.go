@@ -8,7 +8,7 @@ type Zone struct {
 	Kind               ZoneKind            `json:"kind,omitempty"`
 	ResourceRecordSets []ResourceRecordSet `json:"rrsets,omitempty"`
 	Serial             int                 `json:"serial,omitempty"`
-	NotifiedSerial     int                 `json:"notifed_serial,omitempty"`
+	NotifiedSerial     int                 `json:"notified_serial,omitempty"`
 	Masters            []string            `json:"masters,omitempty"`
 	DNSSec             bool                `json:"dnssec,omitempty"`
 	NSec3Param         string              `json:"nsec3param,omitempty"`
