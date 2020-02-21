@@ -3,14 +3,16 @@ package pdns
 import (
 	"context"
 	"errors"
-	"github.com/mittwald/go-powerdns/apis/search"
-	"github.com/mittwald/go-powerdns/apis/servers"
-	"github.com/mittwald/go-powerdns/apis/zones"
-	"github.com/mittwald/go-powerdns/pdnshttp"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/mittwald/go-powerdns/apis/cache"
+	"github.com/mittwald/go-powerdns/apis/search"
+	"github.com/mittwald/go-powerdns/apis/servers"
+	"github.com/mittwald/go-powerdns/apis/zones"
+	"github.com/mittwald/go-powerdns/pdnshttp"
 )
 
 type client struct {
@@ -19,9 +21,10 @@ type client struct {
 	authenticator pdnshttp.ClientAuthenticator
 	debugOutput   io.Writer
 
+	cache   cache.Client
+	search  search.Client
 	servers servers.Client
 	zones   zones.Client
-	search  search.Client
 }
 
 type ClientOption func(c *client) error
@@ -54,6 +57,7 @@ func New(opt ...ClientOption) (Client, error) {
 	c.servers = servers.New(hc)
 	c.zones = zones.New(hc)
 	c.search = search.New(hc)
+	c.cache = cache.New(hc)
 
 	return &c, nil
 }
@@ -118,4 +122,8 @@ func (c *client) Zones() zones.Client {
 
 func (c *client) Search() search.Client {
 	return c.search
+}
+
+func (c *client) Cache() cache.Client {
+	return c.cache
 }

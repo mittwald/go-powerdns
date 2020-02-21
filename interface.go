@@ -2,6 +2,8 @@ package pdns
 
 import (
 	"context"
+
+	"github.com/mittwald/go-powerdns/apis/cache"
 	"github.com/mittwald/go-powerdns/apis/search"
 	"github.com/mittwald/go-powerdns/apis/servers"
 	"github.com/mittwald/go-powerdns/apis/zones"
@@ -28,4 +30,7 @@ type Client interface {
 
 	// Search returns a specialized API for searching
 	Search() search.Client
+
+	// Cache returns a specialized API for caching
+	Cache() cache.Client
 }
