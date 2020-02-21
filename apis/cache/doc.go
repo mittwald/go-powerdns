@@ -1,4 +1,4 @@
-// This package contains a specialized client for interacting with PowerDNS' "Cache" API.
+// Package cache contains a specialized client for interacting with PowerDNS' "Cache" API.
 //
 // More information
 //
