@@ -15,7 +15,7 @@ This package contains a Go library for accessing the [PowerDNS][powerdns] Author
 - [ ] TSIG Keys
 - [x] Searching
 - [ ] Statistics
-- [ ] Cache
+- [x] Cache
 
 ## Installation
 
