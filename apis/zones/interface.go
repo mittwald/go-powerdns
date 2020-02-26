@@ -7,6 +7,9 @@ type Client interface {
 	// ListZones lists known zones for a given serverID
 	ListZones(ctx context.Context, serverID string) ([]Zone, error)
 
+	// ListZone list known zone for a given serverID and zoneID
+	ListZone(ctx context.Context, serverID string, zoneID string) ([]Zone, error)
+
 	// CreateZone creates a new zone for a given server.
 	CreateZone(ctx context.Context, serverID string, zone Zone) (*Zone, error)
 

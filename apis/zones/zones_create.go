@@ -3,8 +3,9 @@ package zones
 import (
 	"context"
 	"fmt"
-	"github.com/mittwald/go-powerdns/pdnshttp"
 	"net/url"
+
+	"github.com/mittwald/go-powerdns/pdnshttp"
 )
 
 func (c *client) CreateZone(ctx context.Context, serverID string, zone Zone) (*Zone, error) {
