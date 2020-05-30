@@ -1,7 +1,5 @@
 package servers
 
-// Cryptokey model a PowerDNS server.
-//
 // More information: https://doc.powerdns.com/authoritative/http-api/cryptokey.html#cryptokey
 type Cryptokey struct {
 	ID         int      `json:"id"`
