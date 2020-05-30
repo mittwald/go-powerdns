@@ -3,6 +3,7 @@ package pdns
 import (
 	"context"
 	"errors"
+	"github.com/mittwald/go-powerdns/apis/cryptokeys"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -21,10 +22,11 @@ type client struct {
 	authenticator pdnshttp.ClientAuthenticator
 	debugOutput   io.Writer
 
-	cache   cache.Client
-	search  search.Client
-	servers servers.Client
-	zones   zones.Client
+	cache      cache.Client
+	cryptokeys cryptokeys.Client
+	search     search.Client
+	servers    servers.Client
+	zones      zones.Client
 }
 
 type ClientOption func(c *client) error
@@ -58,6 +60,7 @@ func New(opt ...ClientOption) (Client, error) {
 	c.zones = zones.New(hc)
 	c.search = search.New(hc)
 	c.cache = cache.New(hc)
+	c.cryptokeys = cryptokeys.New(hc)
 
 	return &c, nil
 }
@@ -126,4 +129,8 @@ func (c *client) Search() search.Client {
 
 func (c *client) Cache() cache.Client {
 	return c.cache
+}
+
+func (c *client) Cryptokeys() cryptokeys.Client {
+	return c.cryptokeys
 }
