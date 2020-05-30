@@ -1,5 +1,6 @@
-package servers
+package cryptokeys
 
+// Cryptokey represents a Cryptokey model of the API
 // More information: https://doc.powerdns.com/authoritative/http-api/cryptokey.html#cryptokey
 type Cryptokey struct {
 	ID         int      `json:"id"`
