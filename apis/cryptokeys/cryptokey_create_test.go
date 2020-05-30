@@ -37,7 +37,7 @@ func TestClient_CreateCryptokey(t *testing.T) {
 	c := pdnshttp.NewClient("http://dns.example", hc, &pdnshttp.APIKeyAuthenticator{APIKey: "secret"}, ioutil.Discard)
 	cc := New(c)
 
-	key, err := cc.CreateCryptokey(context.Background(), "localhost", "pdns-test.de")
+	key, err := cc.CreateCryptokey(context.Background(), "localhost", "pdns-test.de", Cryptokey{})
 
 	assert.Nil(t, err)
 	assert.NotNil(t, key)

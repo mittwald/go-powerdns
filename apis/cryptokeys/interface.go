@@ -14,7 +14,7 @@ type Client interface {
 	GetCryptokey(ctx context.Context, serverID, zoneID string, cryptokeyID int) (*Cryptokey, error)
 
 	// CreateCryptokey creates a new CryptoKey
-	CreateCryptokey(ctx context.Context, serverID, zoneID string) (*Cryptokey, error)
+	CreateCryptokey(ctx context.Context, serverID, zoneID string, opts Cryptokey) (*Cryptokey, error)
 
 	// ToggleCryptokey (de)activates a CryptoKey for the given zone
 	ToggleCryptokey(ctx context.Context, serverID, zoneID string, cryptokeyID int) error
