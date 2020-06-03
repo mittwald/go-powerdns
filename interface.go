@@ -2,6 +2,7 @@ package pdns
 
 import (
 	"context"
+	"github.com/mittwald/go-powerdns/apis/cryptokeys"
 
 	"github.com/mittwald/go-powerdns/apis/cache"
 	"github.com/mittwald/go-powerdns/apis/search"
@@ -33,4 +34,7 @@ type Client interface {
 
 	// Cache returns a specialized API for caching
 	Cache() cache.Client
+
+	// Cryptokeys returns a specialized API for cryptokeys
+	Cryptokeys() cryptokeys.Client
 }

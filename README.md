@@ -10,7 +10,7 @@ This package contains a Go library for accessing the [PowerDNS][powerdns] Author
 
 - [x] Servers
 - [x] Zones
-- [ ] Cryptokeys
+- [x] Cryptokeys
 - [ ] Metadata
 - [ ] TSIG Keys
 - [x] Searching
