@@ -23,6 +23,7 @@ func (e ErrUnexpectedStatus) Error() string {
 	return fmt.Sprintf("unexpected status code %d: %s %s", e.StatusCode, e.URL, e.ErrResponse.Message)
 }
 
+// ErrResponse represents error response from PowerDNS HTTP API
 type ErrResponse struct {
 	Message  string   `json:"error"`
 	Messages []string `json:"errors,omitempty"`
