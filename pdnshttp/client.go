@@ -102,18 +102,15 @@ func (c *Client) doRequest(ctx context.Context, method string, path string, out 
 		// Get a human readable error message
 		// from PowerDNS API response
 		var er ErrResponse
-		dec := json.NewDecoder(res.Body)
-		err = dec.Decode(&er)
-		if err != nil {
+
+		if err := json.NewDecoder(res.Body).Decode(&er); err != nil {
 			return err
 		}
+
 		return ErrUnexpectedStatus{
-			URL:        req.URL.String(),
-			StatusCode: res.StatusCode,
-			ErrResponse: ErrResponse{
-				Message:  er.Message,
-				Messages: er.Messages,
-			},
+			URL:         req.URL.String(),
+			StatusCode:  res.StatusCode,
+			ErrResponse: er,
 		}
 	}
 
@@ -123,9 +120,7 @@ func (c *Client) doRequest(ctx context.Context, method string, path string, out 
 			return err
 		}
 
-		dec := json.NewDecoder(res.Body)
-		err = dec.Decode(out)
-		if err != nil {
+		if err := json.NewDecoder(res.Body).Decode(out); err != nil {
 			return err
 		}
 	}
