@@ -40,6 +40,18 @@ func WithAPIKeyAuthentication(key string) ClientOption {
 	}
 }
 
+// WithBasicAuthentication adds basic authentication to the PowerDNS client.
+func WithBasicAuthentication(username string, password string) ClientOption {
+	return func(c *client) error {
+		c.authenticator = &pdnshttp.BasicAuthenticator{
+			Username: username,
+			Password: password,
+		}
+
+		return nil
+	}
+}
+
 // WithTLSAuthentication configures TLS-based authentication for the PowerDNS client.
 // This is not a feature that is provided by PowerDNS natively, but might be implemented
 // when the PowerDNS API is run behind a reverse proxy.
