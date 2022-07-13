@@ -4,11 +4,5 @@ services:
     image: powerdns/pdns-auth-46:4.6.3
     environment:
       PDNS_AUTH_API_KEY: secret
-    networks:
-      - backend
     ports:
       - 8081:8081
-volumes:
-  database: {}
-networks:
-  backend: {}
