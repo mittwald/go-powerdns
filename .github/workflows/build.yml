@@ -1,0 +1,32 @@
+name: Compile & Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    name: Run tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ '1.18', '1.17', '1.16' ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Run static analysis
+        run: go vet
+
+      - name: Run unit tests
+        run: go test ./...
+
+      - name: Compile
+        run: go build
