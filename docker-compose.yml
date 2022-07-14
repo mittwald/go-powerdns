@@ -6,3 +6,5 @@ services:
       PDNS_AUTH_API_KEY: secret
     ports:
       - 8081:8081
+      - 8053:53/udp
+      - 8053:53/tcp

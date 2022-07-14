@@ -224,6 +224,40 @@ func TestAddRecordToZone(t *testing.T) {
 	require.NotNil(t, rs)
 }
 
+func TestSelectFilteredRRSetsFromZone(t *testing.T) {
+	c := buildClient(t)
+
+	zone := zones.Zone{
+		Name: "example4.de.",
+		Type: zones.ZoneTypeZone,
+		Kind: zones.ZoneKindNative,
+		Nameservers: []string{
+			"ns1.example.com.",
+			"ns2.example.com.",
+		},
+		ResourceRecordSets: []zones.ResourceRecordSet{
+			{Name: "foo.example4.de.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "127.0.0.1"}}},
+			{Name: "bar.example4.de.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "10.0.0.1"}}},
+			{Name: "bar.example4.de.", Type: "TXT", TTL: 60, Records: []zones.Record{{Content: `"Hello!"`}}},
+		},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	created, err := c.Zones().CreateZone(ctx, "localhost", zone)
+
+	require.NoError(t, err, "CreateZone returned error")
+
+	zoneWithRRSets, err := c.Zones().GetZone(ctx, "localhost", created.ID, zones.WithResourceRecordSetFilter("bar.example4.de.", "TXT"))
+
+	require.NoError(t, err)
+	require.Len(t, zoneWithRRSets.ResourceRecordSets, 1)
+	require.Equal(t, "bar.example4.de.", zoneWithRRSets.ResourceRecordSets[0].Name)
+	require.Equal(t, "TXT", zoneWithRRSets.ResourceRecordSets[0].Type)
+	require.Equal(t, `"Hello!"`, zoneWithRRSets.ResourceRecordSets[0].Records[0].Content)
+}
+
 func TestRemoveRecordFromZone(t *testing.T) {
 	c := buildClient(t)
 

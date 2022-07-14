@@ -8,12 +8,47 @@ import (
 	"net/url"
 )
 
-func (c *client) GetZone(ctx context.Context, serverID, zoneID string) (*Zone, error) {
+type GetZoneOption interface {
+	ApplyToGetZoneRequest(req *http.Request) error
+}
+
+type getZoneOptionFunc func(req *http.Request) error
+
+func (g getZoneOptionFunc) ApplyToGetZoneRequest(req *http.Request) error {
+	return g(req)
+}
+
+func WithoutResourceRecordSet() GetZoneOption {
+	return getZoneOptionFunc(func(req *http.Request) error {
+		_ = pdnshttp.WithQueryValue("rrsets", "false")(req)
+		return nil
+	})
+}
+
+func WithResourceRecordSetFilter(name, recordType string) GetZoneOption {
+	return getZoneOptionFunc(func(req *http.Request) error {
+		_ = pdnshttp.WithQueryValue("rrset_name", name)(req)
+		_ = pdnshttp.WithQueryValue("rrset_type", recordType)(req)
+		return nil
+	})
+}
+
+func (c *client) GetZone(ctx context.Context, serverID, zoneID string, opts ...GetZoneOption) (*Zone, error) {
 	zone := Zone{}
 	path := fmt.Sprintf("/api/v1/servers/%s/zones/%s", url.PathEscape(serverID), url.PathEscape(zoneID))
 
-	err := c.httpClient.Get(ctx, path, &zone)
+	req, err := c.httpClient.NewRequest(http.MethodGet, path, nil)
 	if err != nil {
+		return nil, err
+	}
+
+	for _, opt := range opts {
+		if err := opt.ApplyToGetZoneRequest(req); err != nil {
+			return nil, err
+		}
+	}
+
+	if err := c.httpClient.Do(ctx, req, &zone); err != nil {
 		if e, ok := err.(pdnshttp.ErrUnexpectedStatus); ok {
 			if e.StatusCode == http.StatusUnprocessableEntity {
 				return nil, pdnshttp.ErrNotFound{}

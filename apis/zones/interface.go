@@ -15,7 +15,7 @@ type Client interface {
 
 	// GetZone returns an existing zone by ID. If not found, the first returned value
 	// will be nil, and the error return value will be an instance of "pdnshttp.ErrNotFound".
-	GetZone(ctx context.Context, serverID string, zoneID string) (*Zone, error)
+	GetZone(ctx context.Context, serverID string, zoneID string, opts ...GetZoneOption) (*Zone, error)
 
 	// DeleteZone deletes a zone. No shit.
 	DeleteZone(ctx context.Context, serverID string, zoneID string) error
