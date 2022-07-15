@@ -224,6 +224,34 @@ func TestAddRecordToZone(t *testing.T) {
 	require.NotNil(t, rs)
 }
 
+func TestSelectZoneWithoutRRSets(t *testing.T) {
+	c := buildClient(t)
+
+	zone := zones.Zone{
+		Name: "example5.de.",
+		Type: zones.ZoneTypeZone,
+		Kind: zones.ZoneKindNative,
+		Nameservers: []string{
+			"ns1.example.com.",
+			"ns2.example.com.",
+		},
+		ResourceRecordSets: []zones.ResourceRecordSet{
+			{Name: "foo.example5.de.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "127.0.0.1"}}},
+		},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	created, err := c.Zones().CreateZone(ctx, "localhost", zone)
+
+	require.NoError(t, err, "CreateZone returned error")
+
+	zoneWithoutRRSets, err := c.Zones().GetZone(ctx, "localhost", created.ID, zones.WithoutResourceRecordSet())
+	require.NoError(t, err, "GetZone returned error")
+	require.Len(t, zoneWithoutRRSets.ResourceRecordSets, 0, "ResourceRecordSets should be empty")
+}
+
 func TestSelectFilteredRRSetsFromZone(t *testing.T) {
 	c := buildClient(t)
 
