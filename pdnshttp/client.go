@@ -71,18 +71,7 @@ func (c *Client) Delete(ctx context.Context, path string, out interface{}, opts 
 	return c.doRequest(ctx, http.MethodDelete, path, out, opts...)
 }
 
-func (c *Client) doRequest(ctx context.Context, method string, path string, out interface{}, opts ...RequestOption) error {
-	req, err := c.NewRequest(method, path, nil)
-	if err != nil {
-		return err
-	}
-
-	for i := range opts {
-		if err := opts[i](req); err != nil {
-			return err
-		}
-	}
-
+func (c *Client) Do(ctx context.Context, req *http.Request, out interface{}) error {
 	req = req.WithContext(ctx)
 
 	reqDump, _ := httputil.DumpRequestOut(req, true)
@@ -126,4 +115,19 @@ func (c *Client) doRequest(ctx context.Context, method string, path string, out 
 	}
 
 	return nil
+}
+
+func (c *Client) doRequest(ctx context.Context, method string, path string, out interface{}, opts ...RequestOption) error {
+	req, err := c.NewRequest(method, path, nil)
+	if err != nil {
+		return err
+	}
+
+	for i := range opts {
+		if err := opts[i](req); err != nil {
+			return err
+		}
+	}
+
+	return c.Do(ctx, req, out)
 }
