@@ -144,6 +144,27 @@ func TestCreateZone(t *testing.T) {
 	assert.Equal(t, "example.de.", created.Name)
 }
 
+func TestCreateZoneProducedReadableErrorMessages(t *testing.T) {
+	c := buildClient(t)
+
+	zone := zones.Zone{
+		Name:        "test-error-message.de.",
+		Type:        zones.ZoneTypeZone,
+		Kind:        zones.ZoneKindNative,
+		Nameservers: []string{"ns1.example.com.", "ns2.example.com."},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := c.Zones().CreateZone(ctx, "localhost", zone)
+	require.Nil(t, err, "CreateZone returned error")
+
+	_, err2 := c.Zones().CreateZone(ctx, "localhost", zone)
+	require.Error(t, err2, "CreateZone should return error")
+	require.Equal(t, "unexpected status code 409: http://localhost:8081/api/v1/servers/localhost/zones Conflict", err2.Error())
+}
+
 func TestDeleteZone(t *testing.T) {
 	c := buildClient(t)
 
