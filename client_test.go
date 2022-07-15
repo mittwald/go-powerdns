@@ -247,7 +247,7 @@ func TestSelectZoneWithoutRRSets(t *testing.T) {
 
 	require.NoError(t, err, "CreateZone returned error")
 
-	zoneWithoutRRSets, err := c.Zones().GetZone(ctx, "localhost", created.ID, zones.WithoutResourceRecordSet())
+	zoneWithoutRRSets, err := c.Zones().GetZone(ctx, "localhost", created.ID, zones.WithoutResourceRecordSets())
 	require.NoError(t, err, "GetZone returned error")
 	require.Len(t, zoneWithoutRRSets.ResourceRecordSets, 0, "ResourceRecordSets should be empty")
 }

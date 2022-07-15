@@ -18,7 +18,7 @@ func (g getZoneOptionFunc) ApplyToGetZoneRequest(req *http.Request) error {
 	return g(req)
 }
 
-func WithoutResourceRecordSet() GetZoneOption {
+func WithoutResourceRecordSets() GetZoneOption {
 	return getZoneOptionFunc(func(req *http.Request) error {
 		_ = pdnshttp.WithQueryValue("rrsets", "false")(req)
 		return nil
