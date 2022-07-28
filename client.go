@@ -2,18 +2,19 @@ package pdns
 
 import (
 	"context"
-	"errors"
-	"github.com/mittwald/go-powerdns/apis/cryptokeys"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
 
 	"github.com/mittwald/go-powerdns/apis/cache"
+	"github.com/mittwald/go-powerdns/apis/cryptokeys"
 	"github.com/mittwald/go-powerdns/apis/search"
 	"github.com/mittwald/go-powerdns/apis/servers"
 	"github.com/mittwald/go-powerdns/apis/zones"
 	"github.com/mittwald/go-powerdns/pdnshttp"
+	"github.com/pkg/errors"
 )
 
 type client struct {
@@ -97,6 +98,8 @@ func (c *client) WaitUntilUp(ctx context.Context) error {
 
 			_, err = c.httpClient.Do(req)
 			if err != nil {
+				_, _ = fmt.Fprintf(c.debugOutput, "PowerDNS API is not up yet: %v\n", err)
+
 				time.Sleep(1 * time.Second)
 				continue
 			}
@@ -111,7 +114,7 @@ func (c *client) WaitUntilUp(ctx context.Context) error {
 		return nil
 	case <-ctx.Done():
 		cancel = true
-		return errors.New("context exceeded")
+		return errors.Wrap(ctx.Err(), "context exceeded")
 	}
 }
 
