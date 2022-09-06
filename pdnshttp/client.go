@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"strings"
@@ -88,18 +89,33 @@ func (c *Client) Do(ctx context.Context, req *http.Request, out interface{}) err
 	if res.StatusCode == http.StatusNotFound {
 		return ErrNotFound{URL: req.URL.String()}
 	} else if res.StatusCode >= 400 {
-		// Get a human readable error message
-		// from PowerDNS API response
-		var er ErrResponse
+		if res.Header.Get("Content-Type") == "application/json" {
+			// Get a human readable error message
+			// from PowerDNS API response
+			var er ErrResponse
 
-		if err := json.NewDecoder(res.Body).Decode(&er); err != nil {
+			if err := json.NewDecoder(res.Body).Decode(&er); err != nil {
+				return err
+			}
+
+			return ErrUnexpectedStatus{
+				URL:         req.URL.String(),
+				StatusCode:  res.StatusCode,
+				ErrResponse: er,
+			}
+		}
+
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
 			return err
 		}
 
 		return ErrUnexpectedStatus{
-			URL:         req.URL.String(),
-			StatusCode:  res.StatusCode,
-			ErrResponse: er,
+			URL:        req.URL.String(),
+			StatusCode: res.StatusCode,
+			ErrResponse: ErrResponse{
+				Message: string(body),
+			},
 		}
 	}
 
