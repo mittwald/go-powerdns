@@ -10,7 +10,7 @@ import (
 
 func (c *client) ListZones(ctx context.Context, serverID string) ([]Zone, error) {
 	zones := make([]Zone, 0)
-	path := fmt.Sprintf("/api/v1/servers/%s/zones", url.PathEscape(serverID))
+	path := fmt.Sprintf("/servers/%s/zones", url.PathEscape(serverID))
 
 	err := c.httpClient.Get(ctx, path, &zones)
 	if err != nil {
@@ -22,7 +22,7 @@ func (c *client) ListZones(ctx context.Context, serverID string) ([]Zone, error)
 
 func (c *client) ListZone(ctx context.Context, serverID string, zoneName string) ([]Zone, error) {
 	zones := make([]Zone, 0)
-	path := fmt.Sprintf("/api/v1/servers/%s/zones", url.PathEscape(serverID))
+	path := fmt.Sprintf("/servers/%s/zones", url.PathEscape(serverID))
 
 	err := c.httpClient.Get(ctx, path, &zones, pdnshttp.WithQueryValue("zone", zoneName))
 	if err != nil {

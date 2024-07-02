@@ -8,7 +8,7 @@ import (
 
 func (c *client) ListCryptokeys(ctx context.Context, serverID, zoneID string) ([]Cryptokey, error) {
 	cryptokeys := []Cryptokey{}
-	path := fmt.Sprintf("/api/v1/servers/%s/zones/%s/cryptokeys", url.PathEscape(serverID), url.PathEscape(zoneID))
+	path := fmt.Sprintf("/servers/%s/zones/%s/cryptokeys", url.PathEscape(serverID), url.PathEscape(zoneID))
 
 	err := c.httpClient.Get(ctx, path, &cryptokeys)
 	if err != nil {

@@ -11,7 +11,7 @@ import (
 
 func (c *client) ExportZone(ctx context.Context, serverID, zoneID string) ([]byte, error) {
 	output := bytes.Buffer{}
-	path := fmt.Sprintf("/api/v1/servers/%s/zones/%s/export", url.PathEscape(serverID), url.PathEscape(zoneID))
+	path := fmt.Sprintf("/servers/%s/zones/%s/export", url.PathEscape(serverID), url.PathEscape(zoneID))
 
 	err := c.httpClient.Get(ctx, path, &output)
 	if err != nil {
