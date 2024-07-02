@@ -9,7 +9,7 @@ import (
 	"github.com/mittwald/go-powerdns/pdnshttp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"io/ioutil"
+	"io"
 	"os"
 	"os/exec"
 	"testing"
@@ -417,7 +417,7 @@ func TestExportZone(t *testing.T) {
 }
 
 func buildClient(t *testing.T) Client {
-	debug := ioutil.Discard
+	debug := io.Discard
 
 	if testing.Verbose() {
 		debug = os.Stderr

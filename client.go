@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/mittwald/go-powerdns/apis/cryptokeys"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -37,7 +36,7 @@ func New(opt ...ClientOption) (Client, error) {
 	c := client{
 		baseURL:       "http://localhost:8081",
 		httpClient:    http.DefaultClient,
-		debugOutput:   ioutil.Discard,
+		debugOutput:   io.Discard,
 		authenticator: &pdnshttp.NoopAuthenticator{},
 	}
 

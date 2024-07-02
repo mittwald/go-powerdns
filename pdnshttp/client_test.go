@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 )
@@ -17,7 +17,7 @@ func TestGetExecutedCorrectly(t *testing.T) {
 		JSON(map[string]string{"foo": "bar"})
 
 	hc := &http.Client{Transport: gock.DefaultTransport}
-	c := NewClient("http://test.example", hc, &APIKeyAuthenticator{APIKey: "secret"}, ioutil.Discard)
+	c := NewClient("http://test.example", hc, &APIKeyAuthenticator{APIKey: "secret"}, io.Discard)
 
 	var out interface{}
 
