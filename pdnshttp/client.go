@@ -24,14 +24,13 @@ func NewClient(baseURL string, hc *http.Client, auth ClientAuthenticator, debugO
 	if err != nil {
 		panic(err)
 	}
-	var path string
 	if strings.TrimSuffix(u.Path, "/") == "" {
-		path = "/api/v1"
+		u.Path = "/api/v1"
 	} else {
-		path = strings.TrimSuffix(u.Path, "/")
+		u.Path = strings.TrimSuffix(u.Path, "/")
 	}
 	c := Client{
-		baseURL:       strings.TrimSuffix(baseURL, "/") + path,
+		baseURL:       u.Scheme + "://" + u.Host + u.Path,
 		httpClient:    hc,
 		authenticator: auth,
 		debugOutput:   debugOutput,
