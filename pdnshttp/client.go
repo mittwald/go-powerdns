@@ -30,7 +30,7 @@ func NewClient(baseURL string, hc *http.Client, auth ClientAuthenticator, debugO
 		u.Path = strings.TrimSuffix(u.Path, "/")
 	}
 	c := Client{
-		baseURL:       u.String()
+		baseURL:       u.String(),
 		httpClient:    hc,
 		authenticator: auth,
 		debugOutput:   debugOutput,
