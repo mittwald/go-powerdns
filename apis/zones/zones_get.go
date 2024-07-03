@@ -35,7 +35,7 @@ func WithResourceRecordSetFilter(name, recordType string) GetZoneOption {
 
 func (c *client) GetZone(ctx context.Context, serverID, zoneID string, opts ...GetZoneOption) (*Zone, error) {
 	zone := Zone{}
-	path := fmt.Sprintf("/api/v1/servers/%s/zones/%s", url.PathEscape(serverID), url.PathEscape(zoneID))
+	path := fmt.Sprintf("/servers/%s/zones/%s", url.PathEscape(serverID), url.PathEscape(zoneID))
 
 	req, err := c.httpClient.NewRequest(http.MethodGet, path, nil)
 	if err != nil {

@@ -10,7 +10,7 @@ import (
 
 func (c *client) CreateZone(ctx context.Context, serverID string, zone Zone) (*Zone, error) {
 	created := Zone{}
-	path := fmt.Sprintf("/api/v1/servers/%s/zones", url.PathEscape(serverID))
+	path := fmt.Sprintf("/servers/%s/zones", url.PathEscape(serverID))
 
 	zone.ID = ""
 	zone.Type = ZoneTypeZone

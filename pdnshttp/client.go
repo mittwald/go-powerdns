@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
+	"net/url"
 	"strings"
 )
 
@@ -19,8 +20,17 @@ type Client struct {
 
 // NewClient returns a new PowerDNS HTTP client
 func NewClient(baseURL string, hc *http.Client, auth ClientAuthenticator, debugOutput io.Writer) *Client {
+	u, err := url.ParseRequestURI(baseURL)
+	if err != nil {
+		panic(err)
+	}
+	if strings.TrimSuffix(u.Path, "/") == "" {
+		u.Path = "/api/v1"
+	} else {
+		u.Path = strings.TrimSuffix(u.Path, "/")
+	}
 	c := Client{
-		baseURL:       baseURL,
+		baseURL:       u.String(),
 		httpClient:    hc,
 		authenticator: auth,
 		debugOutput:   debugOutput,

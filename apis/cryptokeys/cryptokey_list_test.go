@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 )
@@ -36,7 +36,7 @@ func TestClient_ListCryptokeys(t *testing.T) {
 ]`)
 
 	hc := &http.Client{Transport: gock.DefaultTransport}
-	c := pdnshttp.NewClient("http://dns.example", hc, &pdnshttp.APIKeyAuthenticator{APIKey: "secret"}, ioutil.Discard)
+	c := pdnshttp.NewClient("http://dns.example", hc, &pdnshttp.APIKeyAuthenticator{APIKey: "secret"}, io.Discard)
 	cc := New(c)
 
 	list, err := cc.ListCryptokeys(context.Background(), "localhost", "pdns-test.de")

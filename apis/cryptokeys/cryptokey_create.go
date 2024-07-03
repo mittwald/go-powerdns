@@ -9,7 +9,7 @@ import (
 
 func (c *client) CreateCryptokey(ctx context.Context, serverID, zoneID string, opts Cryptokey) (*Cryptokey, error) {
 	cryptokey := Cryptokey{}
-	path := fmt.Sprintf("/api/v1/servers/%s/zones/%s/cryptokeys",
+	path := fmt.Sprintf("/servers/%s/zones/%s/cryptokeys",
 		url.PathEscape(serverID), url.PathEscape(zoneID))
 
 	err := c.httpClient.Post(ctx, path, &cryptokey, pdnshttp.WithJSONRequestBody(opts))

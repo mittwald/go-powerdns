@@ -8,7 +8,7 @@ import (
 )
 
 func (c *client) RemoveRecordSetFromZone(ctx context.Context, serverID string, zoneID string, name string, recordType string) error {
-	path := fmt.Sprintf("/api/v1/servers/%s/zones/%s", url.PathEscape(serverID), url.PathEscape(zoneID))
+	path := fmt.Sprintf("/servers/%s/zones/%s", url.PathEscape(serverID), url.PathEscape(zoneID))
 
 	set := ResourceRecordSet{
 		Name:       name,
