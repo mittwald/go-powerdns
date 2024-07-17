@@ -9,6 +9,8 @@ const (
 	ZoneKindNative ZoneKind = iota
 	ZoneKindMaster
 	ZoneKindSlave
+	ZoneKindProducer
+	ZoneKindConsumer
 )
 
 func (k ZoneKind) MarshalJSON() ([]byte, error) {
@@ -19,6 +21,10 @@ func (k ZoneKind) MarshalJSON() ([]byte, error) {
 		return []byte(`"Master"`), nil
 	case ZoneKindSlave:
 		return []byte(`"Slave"`), nil
+	case ZoneKindProducer:
+		return []byte(`"Producer"`), nil
+	case ZoneKindConsumer:
+		return []byte(`"Consumer"`), nil
 	default:
 		return nil, fmt.Errorf("unsupported zone kind: %d", k)
 	}
@@ -32,6 +38,10 @@ func (k *ZoneKind) UnmarshalJSON(input []byte) error {
 		*k = ZoneKindMaster
 	case `"Slave"`:
 		*k = ZoneKindSlave
+	case `"Producer"`:
+		*k = ZoneKindProducer
+	case `"Consumer"`:
+		*k = ZoneKindConsumer
 	default:
 		return fmt.Errorf("unsupported zone kind: %s", string(input))
 	}
