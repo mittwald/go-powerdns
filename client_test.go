@@ -4,16 +4,17 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/mittwald/go-powerdns/apis/search"
-	"github.com/mittwald/go-powerdns/apis/zones"
-	"github.com/mittwald/go-powerdns/pdnshttp"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"io"
 	"os"
 	"os/exec"
 	"testing"
 	"time"
+
+	"github.com/mittwald/go-powerdns/apis/search"
+	"github.com/mittwald/go-powerdns/apis/zones"
+	"github.com/mittwald/go-powerdns/pdnshttp"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMain(m *testing.M) {
@@ -24,12 +25,12 @@ func TestMain(m *testing.M) {
 		os.Exit(0)
 	}
 
-	runOrPanic("docker-compose", "rm", "-sfv")
-	runOrPanic("docker-compose", "down", "-v")
-	runOrPanic("docker-compose", "up", "-d")
+	runOrPanic("docker", "compose", "rm", "-sfv")
+	runOrPanic("docker", "compose", "down", "-v")
+	runOrPanic("docker", "compose", "up", "-d")
 
 	defer func() {
-		runOrPanic("docker-compose", "down", "-v")
+		runOrPanic("docker", "compose", "down", "-v")
 	}()
 
 	c, err := New(
@@ -53,7 +54,7 @@ func TestMain(m *testing.M) {
 		fmt.Println("Leaving containers running for further inspection")
 		fmt.Println("")
 	} else {
-		runOrPanic("docker-compose", "down", "-v")
+		runOrPanic("docker", "compose", "down", "-v")
 	}
 
 	os.Exit(e)
@@ -410,7 +411,7 @@ func TestExportZone(t *testing.T) {
 
 	export, sErr := c.Zones().ExportZone(ctx, "localhost", created.ID)
 
-	date := time.Now().Format("20060102") + "01"
+	date := time.Now().UTC().Format("20060102") + "01"
 
 	require.Nil(t, sErr)
 	require.Equal(t, "example-export.de.\t60\tIN\tA\t127.0.0.1\nexample-export.de.\t3600\tIN\tNS\tns1.example.com.\nexample-export.de.\t3600\tIN\tNS\tns2.example.com.\nexample-export.de.\t3600\tIN\tSOA\ta.misconfigured.dns.server.invalid. hostmaster.example-export.de. "+date+" 10800 3600 604800 3600\n", string(export))
