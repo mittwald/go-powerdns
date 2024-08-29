@@ -22,6 +22,8 @@ type Client interface {
 
 	// AddRecordSetToZone will add a new set of records to a zone. Existing record sets for
 	// the exact name/type combination will be replaced.
+	//
+	// Deprecated: Superceded by AddRecordSetsToZone
 	AddRecordSetToZone(ctx context.Context, serverID string, zoneID string, set ResourceRecordSet) error
 
 	// AddRecordSetsToZone will add new sets of records to a zone. Existing record sets for
