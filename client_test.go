@@ -4,16 +4,17 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/mittwald/go-powerdns/apis/search"
-	"github.com/mittwald/go-powerdns/apis/zones"
-	"github.com/mittwald/go-powerdns/pdnshttp"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"io"
 	"os"
 	"os/exec"
 	"testing"
 	"time"
+
+	"github.com/mittwald/go-powerdns/apis/search"
+	"github.com/mittwald/go-powerdns/apis/zones"
+	"github.com/mittwald/go-powerdns/pdnshttp"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMain(m *testing.M) {
@@ -24,12 +25,12 @@ func TestMain(m *testing.M) {
 		os.Exit(0)
 	}
 
-	runOrPanic("docker-compose", "rm", "-sfv")
-	runOrPanic("docker-compose", "down", "-v")
-	runOrPanic("docker-compose", "up", "-d")
+	runOrPanic("docker", "compose", "rm", "-sfv")
+	runOrPanic("docker", "compose", "down", "-v")
+	runOrPanic("docker", "compose", "up", "-d")
 
 	defer func() {
-		runOrPanic("docker-compose", "down", "-v")
+		runOrPanic("docker", "compose", "down", "-v")
 	}()
 
 	c, err := New(
@@ -53,7 +54,7 @@ func TestMain(m *testing.M) {
 		fmt.Println("Leaving containers running for further inspection")
 		fmt.Println("")
 	} else {
-		runOrPanic("docker-compose", "down", "-v")
+		runOrPanic("docker", "compose", "down", "-v")
 	}
 
 	os.Exit(e)
@@ -245,6 +246,47 @@ func TestAddRecordToZone(t *testing.T) {
 	require.NotNil(t, rs)
 }
 
+func TestAddRecordSetsToZone(t *testing.T) {
+	c := buildClient(t)
+
+	zone := zones.Zone{
+		Name: "example6.de.",
+		Type: zones.ZoneTypeZone,
+		Kind: zones.ZoneKindNative,
+		Nameservers: []string{
+			"ns1.example.com.",
+			"ns2.example.com.",
+		},
+		ResourceRecordSets: []zones.ResourceRecordSet{
+			{Name: "foo.example6.de.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "127.0.0.1"}}},
+		},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	created, err := c.Zones().CreateZone(ctx, "localhost", zone)
+
+	require.Nil(t, err, "CreateZone returned error")
+
+	err = c.Zones().AddRecordSetsToZone(ctx, "localhost", created.ID,
+		[]zones.ResourceRecordSet{
+			{Name: "bar.example6.de.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "127.0.0.2"}}},
+			{Name: "baz.example6.de.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "127.0.0.3"}}},
+		},
+	)
+
+	require.Nil(t, err, "AddRecordSetsToZone returned error")
+
+	updated, err := c.Zones().GetZone(ctx, "localhost", created.ID)
+
+	require.Nil(t, err)
+
+	rs := updated.GetRecordSet("bar.example6.de.", "A")
+	require.NotNil(t, rs)
+	rs = updated.GetRecordSet("baz.example6.de.", "A")
+	require.NotNil(t, rs)
+}
+
 func TestSelectZoneWithoutRRSets(t *testing.T) {
 	c := buildClient(t)
 
@@ -410,7 +452,7 @@ func TestExportZone(t *testing.T) {
 
 	export, sErr := c.Zones().ExportZone(ctx, "localhost", created.ID)
 
-	date := time.Now().Format("20060102") + "01"
+	date := time.Now().UTC().Format("20060102") + "01"
 
 	require.Nil(t, sErr)
 	require.Equal(t, "example-export.de.\t60\tIN\tA\t127.0.0.1\nexample-export.de.\t3600\tIN\tNS\tns1.example.com.\nexample-export.de.\t3600\tIN\tNS\tns2.example.com.\nexample-export.de.\t3600\tIN\tSOA\ta.misconfigured.dns.server.invalid. hostmaster.example-export.de. "+date+" 10800 3600 604800 3600\n", string(export))

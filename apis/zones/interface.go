@@ -22,7 +22,13 @@ type Client interface {
 
 	// AddRecordSetToZone will add a new set of records to a zone. Existing record sets for
 	// the exact name/type combination will be replaced.
+	//
+	// Deprecated: Superceded by AddRecordSetsToZone
 	AddRecordSetToZone(ctx context.Context, serverID string, zoneID string, set ResourceRecordSet) error
+
+	// AddRecordSetsToZone will add new sets of records to a zone. Existing record sets for
+	// the exact name/type combination will be replaced.
+	AddRecordSetsToZone(ctx context.Context, serverID string, zoneID string, sets []ResourceRecordSet) error
 
 	// RemoveRecordSetFromZone removes a record set from a zone. The record set is matched
 	// by name and type.
