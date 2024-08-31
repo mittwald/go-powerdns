@@ -32,6 +32,8 @@ type Client interface {
 
 	// RemoveRecordSetFromZone removes a record set from a zone. The record set is matched
 	// by name and type.
+	//
+	// Deprecated: Superceded by RemoveRecordSetsFromZone
 	RemoveRecordSetFromZone(ctx context.Context, serverID string, zoneID string, name string, recordType string) error
 
 	// RemoveRecordSetsFromZone removes record sets from a zone. The record sets are matched
