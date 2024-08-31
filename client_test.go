@@ -395,6 +395,56 @@ func TestRemoveRecordFromZone(t *testing.T) {
 	require.Nil(t, rs)
 }
 
+func TestRemoveRecordsFromZone(t *testing.T) {
+	c := buildClient(t)
+
+	zone := zones.Zone{
+		Name: "example7.de.",
+		Type: zones.ZoneTypeZone,
+		Kind: zones.ZoneKindNative,
+		Nameservers: []string{
+			"ns1.example.com.",
+			"ns2.example.com.",
+		},
+		ResourceRecordSets: []zones.ResourceRecordSet{
+			{Name: "foo.example7.de.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "127.0.0.1"}}},
+		},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	created, err := c.Zones().CreateZone(ctx, "localhost", zone)
+
+	require.Nil(t, err, "CreateZone returned error")
+
+	err = c.Zones().AddRecordSetsToZone(ctx, "localhost", created.ID,
+		[]zones.ResourceRecordSet{
+			{Name: "bar.example7.de.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "127.0.0.2"}}},
+			{Name: "baz.example7.de.", Type: "A", TTL: 60, Records: []zones.Record{{Content: "127.0.0.3"}}},
+		},
+	)
+
+	require.Nil(t, err, "AddRecordSetsToZone returned error")
+
+	updated, err := c.Zones().GetZone(ctx, "localhost", created.ID)
+	require.Nil(t, err)
+	rs1 := updated.GetRecordSet("bar.example7.de.", "A")
+	require.NotNil(t, rs1)
+	rs2 := updated.GetRecordSet("baz.example7.de.", "A")
+	require.NotNil(t, rs2)
+
+	err = c.Zones().RemoveRecordSetsFromZone(ctx, "localhost", created.ID, []zones.ResourceRecordSet{*rs1, *rs2})
+	require.Nil(t, err, "RemoveRecordSetsFromZone returned error")
+
+	updated, err = c.Zones().GetZone(ctx, "localhost", created.ID)
+	require.Nil(t, err)
+	rs := updated.GetRecordSet("bar.example7.de.", "A")
+	require.Nil(t, rs)
+	rs = updated.GetRecordSet("baz.example7.de.", "A")
+	require.Nil(t, rs)
+}
+
 func TestSearchZone(t *testing.T) {
 	c := buildClient(t)
 

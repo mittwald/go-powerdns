@@ -34,6 +34,10 @@ type Client interface {
 	// by name and type.
 	RemoveRecordSetFromZone(ctx context.Context, serverID string, zoneID string, name string, recordType string) error
 
+	// RemoveRecordSetsFromZone removes record sets from a zone. The record sets are matched
+	// by name and type.
+	RemoveRecordSetsFromZone(ctx context.Context, serverID string, zoneID string, sets []ResourceRecordSet) error
+
 	// RetrieveFromMaster retrieves a slave zone from its master
 	RetrieveFromMaster(ctx context.Context, serverID string, zoneID string) error
 
