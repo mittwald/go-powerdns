@@ -1,6 +1,6 @@
 module github.com/mittwald/go-powerdns
 
-go 1.18
+go 1.22
 
 require (
 	github.com/stretchr/testify v1.3.0
