@@ -508,6 +508,47 @@ func TestExportZone(t *testing.T) {
 	require.Equal(t, "example-export.de.\t60\tIN\tA\t127.0.0.1\nexample-export.de.\t3600\tIN\tNS\tns1.example.com.\nexample-export.de.\t3600\tIN\tNS\tns2.example.com.\nexample-export.de.\t3600\tIN\tSOA\ta.misconfigured.dns.server.invalid. hostmaster.example-export.de. "+date+" 10800 3600 604800 3600\n", string(export))
 }
 
+func TestModifyBasicZoneData(t *testing.T) {
+	c := buildClient(t)
+
+	zone := zones.Zone{
+		Name: "example8.de.",
+		Type: zones.ZoneTypeZone,
+		Kind: zones.ZoneKindNative,
+		Nameservers: []string{
+			"ns1.example.com.",
+			"ns2.example.com.",
+		},
+		APIRectify: true,
+		DNSSec:     true,
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	created, err := c.Zones().CreateZone(ctx, "localhost", zone)
+	require.Nil(t, err, "CreateZone returned error")
+
+	require.Equal(t, zones.ZoneSOAEditAPIDefault, created.SOAEditAPI)
+	require.Equal(t, true, created.APIRectify)
+	require.Equal(t, true, created.DNSSec)
+
+	update := zones.ZoneBasicDataUpdate{
+		SOAEditAPI: zones.ZoneSOAEditAPIIncrease,
+		APIRectify: ptr(false),
+	}
+
+	err = c.Zones().ModifyBasicZoneData(ctx, "localhost", created.ID, update)
+	require.Nil(t, err, "ModifyBasicZoneData returned error")
+
+	modified, err := c.Zones().GetZone(ctx, "localhost", created.ID)
+	require.Nil(t, err)
+
+	require.Equal(t, zones.ZoneSOAEditAPIIncrease, modified.SOAEditAPI)
+	require.Equal(t, false, modified.APIRectify)
+	require.Equal(t, created.DNSSec, modified.DNSSec)
+}
+
 func buildClient(t *testing.T) Client {
 	debug := io.Discard
 
@@ -523,6 +564,10 @@ func buildClient(t *testing.T) Client {
 
 	assert.Nil(t, err)
 	return c
+}
+
+func ptr[T any](t T) *T {
+	return &t
 }
 
 // This example uses the "context.WithTimeout" function to wait until the PowerDNS API is reachable

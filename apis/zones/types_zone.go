@@ -30,8 +30,8 @@ type Zone struct {
 	NSec3Param         string              `json:"nsec3param,omitempty"`
 	NSec3Narrow        bool                `json:"nsec3narrow,omitempty"`
 	Presigned          bool                `json:"presigned,omitempty"`
-	SOAEdit            string              `json:"soa_edit,omitempty"`
-	SOAEditAPI         string              `json:"soa_edit_api,omitempty"`
+	SOAEdit            ZoneSOAEdit         `json:"soa_edit,omitempty"`
+	SOAEditAPI         ZoneSOAEditAPI      `json:"soa_edit_api,omitempty"`
 	APIRectify         bool                `json:"api_rectify,omitempty"`
 	Zone               string              `json:"zone,omitempty"`
 	Account            string              `json:"account,omitempty"`

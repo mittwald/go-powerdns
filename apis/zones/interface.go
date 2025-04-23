@@ -54,4 +54,7 @@ type Client interface {
 
 	// RectifyZone rectifies the zone data
 	RectifyZone(ctx context.Context, serverID string, zoneID string) error
+
+	// Modifies basic zone data
+	ModifyBasicZoneData(ctx context.Context, serverID string, zoneID string, update ZoneBasicDataUpdate) error
 }
